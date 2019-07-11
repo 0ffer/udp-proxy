@@ -44,7 +44,7 @@ public class App {
     }
 
     public void run() throws Exception {
-        LOG.info("The server starts...");
+        LOG.info("Server starts...");
 
         nioEventLoopGroup = new EpollEventLoopGroup(config.processThreadsCount());
         final Bootstrap bootstrap = new Bootstrap();
@@ -58,6 +58,7 @@ public class App {
                 });
 
         bootstrap.bind(config.listenAddress(), config.listenPort()).sync();
+        LOG.info("Server binds to {}:{}", config.listenAddress(), config.listenPort());
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override

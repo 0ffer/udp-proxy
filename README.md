@@ -11,6 +11,8 @@ After it build app jar file was created at build/libs/
 Application start command
 ```java -jar udp-proxy.jar```
 
+The ```app.properties``` need to be near the application file.
+
 ## Change log configuration
 
 use ```-D-Dlog4j.configurionFile=configuration-file-name```

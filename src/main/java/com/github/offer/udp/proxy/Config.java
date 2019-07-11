@@ -9,7 +9,10 @@ import java.util.List;
  *
  * @author Stas Melnichuk
  */
-@org.aeonbits.owner.Config.Sources("file:/app.properties")
+@org.aeonbits.owner.Config.Sources({
+        "file:app.properties",
+        "classpath:app.properties"
+})
 public interface Config extends org.aeonbits.owner.Config {
 
     @Key("app.thread.count")
