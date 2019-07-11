@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+}
+
+group 'com.github.0ffer'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.12
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // core
+    implementation group: 'io.netty', name: 'netty-all', version: '4.1.37.Final'
+
+    // utils
+    implementation group: 'commons-net', name: 'commons-net', version: '3.6'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.12'
+    implementation group: 'com.google.guava', name: 'guava', version: '28.0-jre'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+
+    // caches
+    implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '2.7.0'
+    
+    // properties mapping
+    implementation group: 'org.aeonbits.owner', name: 'owner', version: '1.0.10'
+    
+    // logging
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.12.0'
+
+    // metrics
+    implementation group: 'io.dropwizard.metrics', name: 'metrics-core', version: '4.1.0'
+    implementation group: 'io.dropwizard.metrics', name: 'metrics-log4j2', version: '4.1.0'
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.github.offer.udp.proxy.App"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
