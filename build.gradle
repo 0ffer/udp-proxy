@@ -1,11 +1,12 @@
 plugins {
     id 'java'
+    id 'com.palantir.graal' version "0.3.0-37-g77aa98f"
 }
 
 group 'com.github.0ffer'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.12
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -47,4 +48,11 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
+}
+
+graal {
+    graalVersion '19.1.0'
+
+    mainClass 'com.github.offer.udp.proxy.App'
+    outputName 'udp-proxy'
 }

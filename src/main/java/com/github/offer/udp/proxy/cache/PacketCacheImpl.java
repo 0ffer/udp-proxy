@@ -43,7 +43,7 @@ public class PacketCacheImpl implements PacketCache {
                 .expireAfterWrite(config.requestBlockingTimeMs(), TimeUnit.MILLISECONDS)
                 .build();
 
-        final CacheWriter<Integer, List<InetSocketAddress>> waitersRemovalListener = new CacheWriter<>() {
+        final CacheWriter<Integer, List<InetSocketAddress>> waitersRemovalListener = new CacheWriter<Integer, List<InetSocketAddress>>() {
             @Override
             public void write(@NonNull Integer key, @NonNull List<InetSocketAddress> value) {}
 

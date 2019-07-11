@@ -76,9 +76,11 @@ public class App {
 
         final Class channelClass;
         if (Epoll.isAvailable()) {
+            LOG.info("EPOLL is available - use it.");
             serverEventLoopGroup = new EpollEventLoopGroup(config.processThreadsCount());
             channelClass = EpollDatagramChannel.class;
         } else {
+            LOG.info("EPOLL is not available - use NIO.");
             serverEventLoopGroup = new NioEventLoopGroup(config.processThreadsCount());
             channelClass = NioDatagramChannel.class;
         }
