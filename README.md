@@ -9,7 +9,7 @@ Very simple udp proxy with custom protocol realization.
 After it build app jar file was created at build/libs/
 
 Application start command
-```java -jar udp-proxy.jar```
+```java -jar udp-proxy-1.0-SNAPSHOT.jar```
 
 The ```app.properties``` need to be near the application file.
 
