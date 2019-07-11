@@ -4,6 +4,8 @@ Very simple udp proxy with custom protocol realization.
 
 ## Start app
 
+Java 12.0.1 is required.
+
 ```./gradlew build```
 
 After it build app jar file was created at build/libs/
