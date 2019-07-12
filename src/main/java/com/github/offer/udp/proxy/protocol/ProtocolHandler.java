@@ -74,6 +74,8 @@ public class ProtocolHandler extends ChannelInboundHandlerAdapter {
             // FIXME Есть еще четвертый тип пакета - на него вроде можно не отвечать, но сделать-то надо!
             case (114): // 0x72 - R type
                 statisticsManager.markTypeRPacket();
+                processRedirectableRequest(ctx, packet, aimServerAddress, packetTypeByte);
+                break;
             case (105): // 0x69 - I type
                 statisticsManager.markTypeIPacket();
                 processRedirectableRequest(ctx, packet, aimServerAddress, packetTypeByte);

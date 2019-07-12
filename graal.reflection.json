@@ -1,0 +1,29 @@
+[
+  {
+    "name": "org.apache.log4j.Logger"
+  },
+  {
+    "name": "org.apache.logging.log4j.message.DefaultFlowMessageFactory",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : []}
+    ]
+  },
+  {
+    "name": "org.apache.logging.log4j.message.ParameterizedMessageFactory",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : []}
+    ]
+  },
+  {
+    "name": "org.apache.logging.log4j.core.impl.Log4jContextFactory",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : []}
+    ]
+  },
+  {
+    "name": "org.aeonbits.owner.crypto.IdentityDecryptor",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : []}
+    ]
+  }
+]

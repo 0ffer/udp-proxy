@@ -14,10 +14,14 @@ import java.util.ArrayList;
 public class TestUtils {
 
     public static byte[] PING_PACKET = new byte[0];
+    public static byte[] DATA_REQUEST_PACKET = new byte[0];
+    public static byte[] PLAYERS_COUNT_REQUEST_PACKET = new byte[0];
 
     static {
         try {
             PING_PACKET = Hex.decodeHex("53 41 4d 50 b0 20 27 c8 87 09 70 3e 2a c3 02".replaceAll(" ", ""));
+            DATA_REQUEST_PACKET = Hex.decodeHex("53 41 4d 50 7f 00 00 01 87 09 72".replaceAll(" ", ""));
+            PLAYERS_COUNT_REQUEST_PACKET = Hex.decodeHex("53 41 4d 50 7f 00 00 01 87 09 72".replaceAll(" ", ""));
         } catch (DecoderException e) {
             e.printStackTrace();
         }
@@ -27,8 +31,8 @@ public class TestUtils {
         final ConfigImpl result = new ConfigImpl();
         result.setProcessThreadsCount(8);
         result.setListenAddress("127.0.0.1");
-        result.setListenPort(8080);
-        result.setProxyingServerPort(1234);
+        result.setListenPort(8080); // default app port
+        result.setProxyingServerPort(8082); // test echo server default port
 
         result.setMetricsEnable(true);
         result.setMetricsOutputType(MetricsOutputType.CONSOLE);

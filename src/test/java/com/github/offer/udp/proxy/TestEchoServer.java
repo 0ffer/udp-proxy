@@ -1,6 +1,7 @@
 package com.github.offer.udp.proxy;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
@@ -8,35 +9,25 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- *
- * Simple netty upd client to send single datagram and wait some time to response datagram.
+ * Simple test server with echo + "hello" functionality.
  *
  * @author Stas Melnichuk
  */
-public class TestClient {
+public class TestEchoServer {
     private static final Logger LOG = LogManager.getLogger(TestClient.class);
 
-    private static final int DEFAULT_TIMEOUT = 5000;
-    public static final int DEFAULT_BIND_PORT = 8081;
+    public static final int DEFAULT_BIND_PORT = 8082;
 
     private Bootstrap bootstrap;
     private EventLoopGroup group;
     private Channel channel;
 
-    private final int timeout;
+    private AtomicInteger handledRequestsCount = new AtomicInteger();
 
-    private CyclicBarrier barrier = new CyclicBarrier(2);
-    private volatile boolean isReceiveResponse = false;
-
-    private volatile DatagramPacket responce;
-
-    public TestClient(final int timeout) {
-
-        this.timeout = timeout;
+    public TestEchoServer() {
 
         group = new NioEventLoopGroup();
 
@@ -44,11 +35,7 @@ public class TestClient {
         bootstrap.group(group)
                 .channel(NioDatagramChannel.class)
                 .option(ChannelOption.SO_BROADCAST, true)
-                .handler(new TestClient.WriteHandler());
-    }
-
-    public TestClient() {
-        this(DEFAULT_TIMEOUT);
+                .handler(new TestEchoServer.WriteHandler());
     }
 
     public void run() throws Exception {
@@ -60,21 +47,12 @@ public class TestClient {
         channel = future.channel();
     }
 
-    public void stop() {
-        group.shutdownGracefully();
+    public int getHandledRequestsCount() {
+        return handledRequestsCount.get();
     }
 
-    public DatagramPacket send(final DatagramPacket datagramPacket) throws Exception {
-        barrier.reset();
-        responce = null;
-
-        channel.writeAndFlush(datagramPacket);
-
-        barrier.await(timeout, TimeUnit.MILLISECONDS);
-
-        isReceiveResponse = false;
-
-        return responce;
+    public void stop() {
+        group.shutdownGracefully();
     }
 
     /**
@@ -84,14 +62,22 @@ public class TestClient {
 
         @Override
         public void channelRead0(ChannelHandlerContext ctx, io.netty.channel.socket.DatagramPacket msg) throws Exception {
-            String response = msg.content().toString();
-            System.out.println(response);
+            TestEchoServer.this.handledRequestsCount.incrementAndGet();
 
-            TestClient.this.responce = msg.copy();
+            int msgSize = msg.content().readableBytes();
+            ByteBuf buffer = ctx.alloc().buffer(msgSize + 5);
 
-//            ctx.close();
-            isReceiveResponse = true;
-            barrier.await();
+            buffer.writeBytes(msg.content());
+            buffer.writeChar('h');
+            buffer.writeChar('e');
+            buffer.writeChar('l');
+            buffer.writeChar('l');
+            buffer.writeChar('o');
+
+            String response = buffer.toString();
+            System.out.println("Echo... " + response);
+
+            ctx.writeAndFlush(new DatagramPacket(buffer, msg.sender(), msg.recipient()));
         }
 
         @Override
@@ -100,5 +86,4 @@ public class TestClient {
             ctx.close();
         }
     }
-
 }

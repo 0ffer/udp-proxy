@@ -33,7 +33,7 @@ public class ProtocolHandlerTests {
     @Test
     public void pingPacketTest() throws Exception {
         final TestClient testClient = new TestClient();
-        try{
+        try {
             testClient.run();
 
             DatagramPacket request = new DatagramPacket(
@@ -56,4 +56,38 @@ public class ProtocolHandlerTests {
 
     }
 
+    @Test
+    public void cachablePacketTest() throws Exception {
+        final TestEchoServer testEchoServer = new TestEchoServer();
+        final TestClient testClient = new TestClient();
+        try {
+            testEchoServer.run();
+            testClient.run();
+
+            // Take from remote server.
+            testClient.send(new DatagramPacket(
+                    Unpooled.copiedBuffer(TestUtils.DATA_REQUEST_PACKET),
+                    SocketUtils.socketAddress("127.0.0.1", config.listenPort())));
+            assertEquals(1, testEchoServer.getHandledRequestsCount());
+
+            // Already in cache.
+            testClient.send(new DatagramPacket(
+                    Unpooled.copiedBuffer(TestUtils.DATA_REQUEST_PACKET),
+                    SocketUtils.socketAddress("127.0.0.1", config.listenPort())));
+            assertEquals(1, testEchoServer.getHandledRequestsCount());
+
+            // Cache is expiring - second request to remote server.
+            Thread.sleep(1000);
+            testClient.send(new DatagramPacket(
+                    Unpooled.copiedBuffer(TestUtils.DATA_REQUEST_PACKET),
+                    SocketUtils.socketAddress("127.0.0.1", config.listenPort())));
+            assertEquals(2, testEchoServer.getHandledRequestsCount());
+
+        } catch (Exception ex) {
+            throw ex;
+        } finally {
+            testEchoServer.stop();
+            testClient.stop();
+        }
+    }
 }
