@@ -61,7 +61,8 @@ jar {
 }
 
 graal {
-    graalVersion '19.1.0'
+//    graalVersion '19.1.0'
+    graalVersion '1.0.0-rc16'
 
     mainClass 'com.github.offer.udp.proxy.App'
     outputName 'udp-proxy'
