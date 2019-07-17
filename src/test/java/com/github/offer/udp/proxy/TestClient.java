@@ -5,11 +5,10 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Stas Melnichuk
  */
 public class TestClient {
-    private static final Logger LOG = LogManager.getLogger(TestClient.class);
+    private static final Logger LOG = Logger.getLogger(TestClient.class.getName());
 
     private static final int DEFAULT_TIMEOUT = 5000;
     public static final int DEFAULT_BIND_PORT = 8081;

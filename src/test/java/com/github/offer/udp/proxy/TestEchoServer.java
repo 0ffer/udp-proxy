@@ -6,10 +6,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 /**
  * Simple test server with echo + "hello" functionality.
@@ -17,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Stas Melnichuk
  */
 public class TestEchoServer {
-    private static final Logger LOG = LogManager.getLogger(TestClient.class);
+    private static final Logger LOG = Logger.getLogger(TestClient.class.getName());
 
     public static final int DEFAULT_BIND_PORT = 8082;
 

@@ -3,17 +3,14 @@ package com.github.offer.udp.proxy.statistics;
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Slf4jReporter;
 import com.github.offer.udp.proxy.Config;
 import com.github.offer.udp.proxy.Utils;
 import com.google.common.net.InetAddresses;
 import io.netty.channel.socket.DatagramPacket;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 /**
  * Manager for packet statistics.
@@ -23,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author Stas Melnichuk
  */
 public class StatisticsManagerImpl implements StatisticsManager {
-    private static final Logger LOG = LogManager.getLogger(StatisticsManager.class);
+    private static final Logger LOG = Logger.getLogger(StatisticsManager.class.getName());
     private static final MetricRegistry metrics = new MetricRegistry();
 
     private final Config config;
@@ -69,15 +66,18 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
         if (config.isMetricsEnable()) {
             switch (config.metricsOutput()) {
-                case LOG: {
-                    final Slf4jReporter reporter = Slf4jReporter.forRegistry(metrics)
-                            .outputTo(LoggerFactory.getLogger("com.github.offer.udp.proxy.metrics"))
-                            .convertRatesTo(TimeUnit.SECONDS)
-                            .convertDurationsTo(TimeUnit.MILLISECONDS)
-                            .build();
-                    reporter.start(config.metricsOutputFrequency(), TimeUnit.MILLISECONDS);
+                case LOG:
+//                    {
+//                    final Slf4jReporter reporter = Slf4jReporter.forRegistry(metrics)
+//                            .outputTo(LoggerFactory.getLogger("com.github.offer.udp.proxy.metrics"))
+//                            .convertRatesTo(TimeUnit.SECONDS)
+//                            .convertDurationsTo(TimeUnit.MILLISECONDS)
+//                            .build();
+//                    reporter.start(config.metricsOutputFrequency(), TimeUnit.MILLISECONDS);
 
-                    break; }
+                    throw new IllegalStateException("Unsupported in graal");
+
+//                    break; }
                 case CONSOLE: {
                     final ConsoleReporter reporter = ConsoleReporter.forRegistry(metrics)
                             .convertRatesTo(TimeUnit.SECONDS)
@@ -101,7 +101,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     public void markWrongPrefixPacket(int prefix) {
-        LOG.info("Ignore packet with wrong prefix: {}", () -> Integer.toHexString(prefix));
+        LOG.info(() -> String.format("Ignore packet with wrong prefix: %s", Integer.toHexString(prefix)));
 
         if(config.isMetricsEnable()) {
             wrongPrefixMeter.mark();
@@ -110,7 +110,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     public void markTooSmallPacket(final int length) {
-        LOG.info("Ignore packet with too small length: {}", length);
+        LOG.info(() -> String.format("Ignore packet with too small length: %s", length));
 
         if(config.isMetricsEnable()) {
             tooSmallPacketMeter.mark();
@@ -119,7 +119,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     public void markAimServerNotAllowedPacket(int aimServerAddress) {
-        LOG.info("Ignore packet with not allowed address: {}", () -> InetAddresses.fromInteger(aimServerAddress));
+        LOG.info(() -> String.format("Ignore packet with not allowed address: %s", InetAddresses.fromInteger(aimServerAddress)));
 
         if(config.isMetricsEnable()) {
             aimServerNotAllowedMeter.mark();
@@ -155,7 +155,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     public void markUnknownTypePacket(final DatagramPacket packet) {
-        LOG.warn("Ignore packet with unknown type with next content: {}", () -> Hex.encodeHexString(Utils.readAllReadableBytes(packet.content())));
+        LOG.warning(() -> String.format("Ignore packet with unknown type with next content: %s", Hex.encodeHexString(Utils.readAllReadableBytes(packet.content()))));
 
         if(config.isMetricsEnable()) {
             unknownPacketTypeMeter.mark();
@@ -164,7 +164,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     public void markLateResponse(int serverAddress, byte packetTypeByte) {
-        LOG.warn("Receive late response packet from {}, with type {}", () -> InetAddresses.fromInteger(serverAddress), () -> Hex.encodeHexString(new byte[] {packetTypeByte}));
+        LOG.warning(() -> String.format("Receive late response packet from %s, with type %s", InetAddresses.fromInteger(serverAddress), Hex.encodeHexString(new byte[] {packetTypeByte})));
 
         if(config.isMetricsEnable()) {
             lateResponseMeter.mark();
@@ -173,7 +173,7 @@ public class StatisticsManagerImpl implements StatisticsManager {
 
     @Override
     public void markBlockedPacket(int serverAddress, byte packetTypeByte) {
-        LOG.warn("Blocked packet to address {}, with type {}", () -> InetAddresses.fromInteger(serverAddress), () -> Hex.encodeHexString(new byte[] {packetTypeByte}));
+        LOG.warning(() -> String.format("Blocked packet to address %s, with type %s", InetAddresses.fromInteger(serverAddress), Hex.encodeHexString(new byte[] {packetTypeByte})));
 
         if(config.isMetricsEnable()) {
             blockedRequestMeter.mark();

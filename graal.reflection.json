@@ -1,29 +1,51 @@
 [
   {
-    "name": "org.apache.log4j.Logger"
-  },
-  {
-    "name": "org.apache.logging.log4j.message.DefaultFlowMessageFactory",
-    "methods": [
-      {"name" : "<init>", "parameterTypes" : []}
-    ]
-  },
-  {
-    "name": "org.apache.logging.log4j.message.ParameterizedMessageFactory",
-    "methods": [
-      {"name" : "<init>", "parameterTypes" : []}
-    ]
-  },
-  {
-    "name": "org.apache.logging.log4j.core.impl.Log4jContextFactory",
-    "methods": [
-      {"name" : "<init>", "parameterTypes" : []}
-    ]
-  },
-  {
     "name": "org.aeonbits.owner.crypto.IdentityDecryptor",
     "methods": [
       {"name" : "<init>", "parameterTypes" : []}
+    ]
+  },
+  {
+    "name": "io.netty.buffer.ByteBufAllocator"
+  },
+  {
+    "name": "io.netty.channel.socket.nio.NioDatagramChannel",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : []}
+    ]
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSLW",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : ["com.github.benmanes.caffeine.cache.Caffeine", "com.github.benmanes.caffeine.cache.CacheLoader", "boolean"]}
+    ]
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.SSW",
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : ["com.github.benmanes.caffeine.cache.Caffeine", "com.github.benmanes.caffeine.cache.CacheLoader", "boolean"]}
+    ]
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.PSW",
+    "fields": [
+      { "name": "writeTime", "allowWrite": true}
+    ],
+    "methods": [
+      {"name" : "<init>", "parameterTypes" : []}
+    ]
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.BLCHeader$DrainStatusRef",
+    "fields": [
+      { "name": "drainStatus", "allowWrite": true}
+    ]
+  },
+  {
+    "name": "com.github.benmanes.caffeine.cache.PS",
+    "fields": [
+      { "name": "key", "allowWrite": true},
+      { "name": "value", "allowWrite": true}
     ]
   }
 ]

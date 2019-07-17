@@ -5,6 +5,7 @@ import com.github.offer.udp.proxy.cache.PacketCacheImpl;
 import com.github.offer.udp.proxy.protocol.ProtocolHandler;
 import com.github.offer.udp.proxy.routing.AddressChecker;
 import com.github.offer.udp.proxy.routing.AddressCheckerImpl;
+import com.github.offer.udp.proxy.statistics.MetricsOutputType;
 import com.github.offer.udp.proxy.statistics.StatisticsManager;
 import com.github.offer.udp.proxy.statistics.StatisticsManagerImpl;
 import com.github.offer.udp.proxy.validation.PacketValidator;
@@ -19,8 +20,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.aeonbits.owner.ConfigFactory;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -29,7 +33,7 @@ import org.apache.logging.log4j.Logger;
  * @author Stas Melnichuk
  */
 public class App {
-    private static final Logger LOG = LogManager.getLogger(App.class);
+    private static final Logger LOG = Logger.getLogger(App.class.getName());
 
     private MultithreadEventLoopGroup serverEventLoopGroup;
 
@@ -53,7 +57,7 @@ public class App {
         final Bootstrap bootstrap = prepareServer();
 
         bootstrap.bind(config.listenAddress(), config.listenPort()).sync();
-        LOG.info("Server binds to {}:{}", config.listenAddress(), config.listenPort());
+        LOG.info(() -> String.format("Server binds to %s:%s", config.listenAddress(), config.listenPort()));
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
@@ -75,17 +79,17 @@ public class App {
     private Bootstrap prepareServer() {
 
         final Class channelClass;
-        if (Epoll.isAvailable()) {
-            LOG.info("EPOLL is available - use it.");
-            serverEventLoopGroup = new EpollEventLoopGroup(config.processThreadsCount());
-            channelClass = EpollDatagramChannel.class;
-        } else {
+        // Требуется отдельно настраивать JNI для graal - https://github.com/oracle/graal/blob/master/substratevm/JNI.md
+//        if (Epoll.isAvailable()) {
+//            LOG.info("EPOLL is available - use it.");
+//            serverEventLoopGroup = new EpollEventLoopGroup(config.processThreadsCount());
+//            channelClass = EpollDatagramChannel.class;
+//        } else {
             LOG.info("EPOLL is not available - use NIO.");
             serverEventLoopGroup = new NioEventLoopGroup(config.processThreadsCount());
             channelClass = NioDatagramChannel.class;
-        }
+//        }
 
-        serverEventLoopGroup = new EpollEventLoopGroup(config.processThreadsCount());
         final Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(serverEventLoopGroup)
                 .channel(channelClass)
@@ -105,8 +109,34 @@ public class App {
     }
 
     public static void main(String[] args) throws Exception {
-        final Config config = ConfigFactory.create(Config.class);
+        final Config config = getDefaultConfig();
+
+        Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        logger.setLevel(Level.WARNING);
+
         new App(config).run();
+    }
+
+    public static Config getDefaultConfig() {
+        final ConfigImpl result = new ConfigImpl();
+        result.setProcessThreadsCount(8);
+        result.setListenAddress("127.0.0.1");
+        result.setListenPort(8080); // default app port
+        result.setProxyingServerPort(8082); // test echo server default port
+
+        result.setMetricsEnable(false);
+        result.setMetricsOutputType(MetricsOutputType.CONSOLE);
+        result.setMetricsOutputFrequency(5000);
+
+        result.setAllowedSubnets(new ArrayList<>());
+        result.allowedSubnets().add("127.0.0.1/16");
+        result.allowedSubnets().add("176.32.0.0/16");
+
+        result.setResponseCacheExpirationTimeMs(1000);
+        result.setRequestBlockingTimeMs(1000);
+        result.setResponseWaitingTimeMs(500);
+
+        return result;
     }
 
 }

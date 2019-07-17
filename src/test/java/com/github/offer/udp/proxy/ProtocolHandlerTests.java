@@ -3,17 +3,17 @@ package com.github.offer.udp.proxy;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.internal.SocketUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public class ProtocolHandlerTests {
-    private static final Logger LOG = LogManager.getLogger(ProtocolHandlerTests.class);
+    private static final Logger LOG = Logger.getLogger(ProtocolHandlerTests.class.getName());
 
     private static App app;
     private static Config config;
@@ -47,7 +47,7 @@ public class ProtocolHandlerTests {
             final byte[] responseBytes = Utils.readAllReadableBytes(response.content());
             assertArrayEquals(TestUtils.PING_PACKET, responseBytes);
 
-            LOG.info(response);
+            LOG.info(response.toString());
         } catch (Exception ex) {
             throw ex;
         } finally {

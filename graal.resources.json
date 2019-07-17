@@ -1,5 +1,5 @@
 {
   "resources": [
-    {"pattern": ".*/.*.xml"}
+    {"pattern": ".*epoll_x86_64.so"}
   ]
 }
